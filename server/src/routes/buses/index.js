@@ -62,8 +62,10 @@ DataRouter.route('/:day').put((req, res) => {
 })
 
 // RESTful delete
-DataRouter.route('/:day').delete((req, res) => {
-  Buse.findOneAndDelete({ 년월: req.params.day }, (err, bus) => {
+DataRouter.route('/:day/:route').delete((req, res) => {
+  console.log(req.params.day, req.params.route, '!!!');
+  Buse.findOneAndDelete({ 년월: req.params.day, 노선: req.params.route }, (err, bus) => {
+    console.log(bus);
     if (err) throw err;
     res.json({ status: 204, msg: `Bus Data ${req.params.day} removed...` })
   })
