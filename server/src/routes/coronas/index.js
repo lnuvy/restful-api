@@ -44,7 +44,6 @@ DataRouter.route('/').post((req, res) => {
     if (err) throw err;
     if (!corona) {
       const obj = new Corona(req.body);
-      console.log(obj);
       obj.save().then(() => {
         res.json({ status: 201, msg: "new data created in mongoDB...", obj })
       })
@@ -55,7 +54,7 @@ DataRouter.route('/').post((req, res) => {
   })
 })
 
-// RESTful 기준일로 단일데이터 조회
+// Restful 기준일로 단일데이터 조회
 DataRouter.route('/:day').get((req, res) => {
   Corona.findOne({ 기준일: req.params.day }, (err, corona) => {
     if (err) throw err;
@@ -79,9 +78,9 @@ DataRouter.route('/:day').put((req, res) => {
 
 // RESTful delete
 DataRouter.route('/:day').delete((req, res) => {
-  Corona.findOneAndDelete(req.params.day, (err, corona) => {
+  Corona.findOneAndRemove({ 기준일: req.params.day }, (err, corona) => {
     if (err) throw err;
-    res.json({ status: 204, msg: `Corona Data ${req.params.day} removed...`, corona })
+    res.json({ status: 204, msg: `Corona Data ${req.params.day} removed...` })
   })
 })
 
