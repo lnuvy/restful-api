@@ -3,7 +3,7 @@ var app = express()
 var cors = require('cors') // cors 설정
 var logger = require('morgan')
 var mongoose = require('mongoose')
-require('dotenv').config() // env 읽어오기
+require('dotenv').config() // api.env 읽어오기
 var routes = require('./src/routes')
 
 var corsOptions = {
@@ -11,7 +11,7 @@ var corsOptions = {
   credentials: true,
 }
 
-const URL = process.env.REACT_APP_CLOUD
+const URL = process.env.REACT_APP_CLOUD;
 
 mongoose.connect(URL, {
   useNewUrlParser: true,
@@ -25,11 +25,11 @@ app.use(logger('tiny')) // Logger
 
 app.use('/api', routes) // api 라우팅
 
-app.use( (req, res, next) => {
-  res.status(404).send('Sorry 404')
+app.use((req, res, next) => {
+  res.status(404).send('<h1>Sorry 404</h1>')
 })
 
-app.use( (err, req, res, next) => {
+app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("broken on server")
 })

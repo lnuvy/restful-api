@@ -7,7 +7,6 @@ const Corona = require('../../models/Corona')
 DataRouter.route('/').get(async (req, res) => {
 
   let coronas = await Corona.find()
-
   let filtered = null;
 
   if (req.query.start !== undefined) {
@@ -28,22 +27,24 @@ DataRouter.route('/').get(async (req, res) => {
 
   }
   if (filtered === null) {
+    coronas.sort();
     res.json({ status: 200, coronas })
   } else {
     coronas = filtered
+    coronas.sort();
     res.json({ status: 200, coronas })
   }
 })
 
 
 // post 유효성 검사후 데이터 추가
-DataRouter.post('/', (req, res) => {
-  console.log(req.body);
+DataRouter.route('/').post((req, res) => {
 
   Corona.findOne({ 기준일: req.body.기준일 }, (err, corona) => {
     if (err) throw err;
     if (!corona) {
       const obj = new Corona(req.body);
+      console.log(obj);
       obj.save().then(() => {
         res.json({ status: 201, msg: "new data created in mongoDB...", obj })
       })
@@ -55,28 +56,32 @@ DataRouter.post('/', (req, res) => {
 })
 
 // RESTful 기준일로 단일데이터 조회
-DataRouter.get('/:기준일', (req, res) => {
-  console.log("!!!!!!");
-  Corona.findOne({ 기준일: req.params.기준일 }, (err, corona) => {
+DataRouter.route('/:day').get((req, res) => {
+  Corona.findOne({ 기준일: req.params.day }, (err, corona) => {
     if (err) throw err;
-    res.json({ status: 200, corona })
+
+    if (corona === null) {
+      const msg = 'There is no data !!!'
+      res.json({ status: 204, msg })
+    } else {
+      res.json({ status: 200, corona })
+    }
   })
 })
 
 // RESTful put
-DataRouter.put('/:기준일', (req, res) => {
-  Corona.findByIdAndUpdate(req.params.기준일, req.body, { new: true }, (err, corona) => {
+DataRouter.route('/:day').put((req, res) => {
+  Corona.findOneAndUpdate({ 기준일: req.params.day }, req.body, { new: true }, (err, corona) => {
     if (err) throw err;
-    res.json({ status: 204, msg: `Corona Data ${req.params.기준일} updated...`, corona })
-    console.log(corona);
+    res.json({ status: 204, msg: `Corona Data ${req.params.day} updated...`, corona })
   })
 })
 
 // RESTful delete
-DataRouter.delete('/:기준일', (req, res) => {
-  Corona.findByIdAndDelete(req.params.기준일, req.body, (err, corona) => {
+DataRouter.route('/:day').delete((req, res) => {
+  Corona.findOneAndDelete(req.params.day, (err, corona) => {
     if (err) throw err;
-    res.json({ status: 204, msg: `Corona Data ${req.params.기준일} removed...`, corona })
+    res.json({ status: 204, msg: `Corona Data ${req.params.day} removed...`, corona })
   })
 })
 

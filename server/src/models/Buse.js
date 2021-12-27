@@ -24,7 +24,7 @@ const buseSchema = new mongoose.Schema({
   "22시": { type: String, require: true, },
   "23시": { type: String, require: true, },
   "합계": { type: String, require: true, },
-})
+}, { versionKey: false }) // mongoose 버전키 필드 비활성화
 
 const Buse = mongoose.model('Buse', buseSchema, 'buses')
 module.exports = Buse
